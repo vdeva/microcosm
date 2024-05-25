@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model human {
+  id        Int       @id @default(autoincrement()) @map("id")
+  name      String    @map("name")
+  address   String    @map("address")
+  username  String    @unique @map("username")
+  tweets    tweet[]   @relation("AuthorTweets")
+  likes     tweet[]   @relation("LikedTweets")
+
+  followers   UserFollowers[] @relation("FollowedBy")
+  following   UserFollowers[] @relation("FollowingBy")
+
+  @@map("human") // Specifies the table name in the database
+}
+
+model UserFollowers {
+  followerId   Int       @map("follower_id")
+  followingId  Int       @map("following_id")
+
+  follower     human    @relation("FollowedBy", fields: [followerId], references: [id])
+  following    human    @relation("FollowingBy", fields: [followingId], references: [id])
+
+  @@id([followerId, followingId])
+  @@map("user_followers") // Specifies the pivot table name in the database
+}
+
+model tweet {
+  id            Int       @id @default(autoincrement()) @map("id")
+  name          String    @map("name")
+  handle        String    @map("handle")
+  content       String    @map("content")
+  likes         Int       @map("likes")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  authorId      Int       @map("author_id")
+  author        human     @relation("AuthorTweets", fields: [authorId], references: [id])
+
+  likedBy       human[]   @relation("LikedTweets")
+
+  parentTweetId Int?      @map("parent_tweet_id")
+  parentTweet   tweet?    @relation("TweetReplies", fields: [parentTweetId], references: [id])
+  replies       tweet[]   @relation("TweetReplies")
+
+  @@map("tweet")
+}
+
+model NewsArticle {
+  id            Int       @id @default(autoincrement()) @map("id")
+  title         String    @map("title")
+  content       String    @map("content")
+  importance    Int       @map("importance") // Represents the level of importance of the article
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@map("news_articles") // Specifies the table name in the database
+}
