@@ -29,10 +29,18 @@ export function Market() {
   const [stocks, setStocks] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/stocks") // Adjust this URL to your actual API endpoint
-      .then((response) => response.json())
-      .then((data) => setStocks(data))
-      .catch((error) => console.error("Error fetching stocks:", error));
+    const fetchData = () => {
+      fetch("http://127.0.0.1:8000/stocks") // Adjust this URL to your actual API endpoint
+        .then((response) => response.json())
+        .then((data) => setStocks(data))
+        .catch((error) => console.error("Error fetching stocks:", error));
+    };
+
+    fetchData(); // Initial fetch
+
+    const intervalId = setInterval(fetchData, 15000); // Set up the interval to refetch every 15 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
 
   // This will format our fetched stock data into a format that Chart.js can use

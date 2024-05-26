@@ -108,7 +108,7 @@ tweet_template = """
 def generate_tweet(human, selected_articles, selected_stocks=None):
 
     if selected_stocks:
-        stock_info = f'Also, check out these stock movements:\n' + '\n'.join(
+        stock_info = f'Also, check out these stock movementsm you might be happy about it or you might be very critical of it, maybe you shorted it so you feel happy or maybe not:\n' + '\n'.join(
             f'{stock["symbol"]}: {stock["name"]} recently traded at ${stock["price"]:.2f}' 
             for stock in selected_stocks
         )
