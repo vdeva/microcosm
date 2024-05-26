@@ -6,7 +6,6 @@ from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
 from random import randint, sample
 
-
 # Load environment variables
 load_dotenv()
 
@@ -79,7 +78,7 @@ def schedule_news_generation():
             title, content = generate_news_article(recent_titles)
             insert_news_article(title, content.strip())
             print(f"Inserted article: {title}")
-            time.sleep(5)
+            time.sleep(0.5)
     except KeyboardInterrupt:
         print("Stopped by user.")
 

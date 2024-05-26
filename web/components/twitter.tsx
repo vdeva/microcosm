@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
 import { TweetPreview } from "./tweetprev";
+import Image from "next/image";
 
 export function Twitter() {
   const [tweets, setTweets] = useState([]);
@@ -8,15 +11,15 @@ export function Twitter() {
   // Function to fetch tweets
   const fetchTweets = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/twitterfeed');
+      const response = await fetch("http://127.0.0.1:8000/twitterfeed");
       if (response.ok) {
         const newTweets = await response.json();
-        setTweets(prevTweets => [...newTweets, ...prevTweets]); // Prepend new tweets to existing ones
+        setTweets((prevTweets) => [...newTweets, ...prevTweets]); // Prepend new tweets to existing ones
       } else {
-        throw new Error('Failed to fetch tweets');
+        throw new Error("Failed to fetch tweets");
       }
     } catch (error) {
-      console.error('Error fetching tweets:', error);
+      console.error("Error fetching tweets:", error);
     }
   };
 
@@ -29,25 +32,41 @@ export function Twitter() {
   useEffect(() => {
     const handleScroll = () => {
       const { scrollTop } = tweetContainerRef.current;
-      if (scrollTop === 0) { // Check if scrolled to the top
+      if (scrollTop === 0) {
+        // Check if scrolled to the top
         fetchTweets(); // Fetch new tweets
       }
     };
 
     const tweetContainer = tweetContainerRef.current;
-    tweetContainer.addEventListener('scroll', handleScroll);
+    tweetContainer.addEventListener("scroll", handleScroll);
 
     // Cleanup the event listener on component unmount
     return () => {
-      tweetContainer.removeEventListener('scroll', handleScroll);
+      tweetContainer.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
-    <div className="flex flex-col w-[400px] h-[500px] bg-[#c3c3c3]
-              ">
-      <div ref={tweetContainerRef} className="flex flex-col p-2 gap-2 overflow-auto">
-        {tweets.map(tweet => (
+    <div
+      className="flex flex-col w-[400px] h-[500px] bg-[#c3c3c3]
+              "
+    >
+      <div
+        ref={tweetContainerRef}
+        className="flex flex-col p-2 gap-2 overflow-auto"
+      >
+        {tweets.length < 1 && (
+          <div className="h-[490px] w-full flex flex-col items-center justify-center">
+            <Image
+              src="/progressbar.gif"
+              alt="progress bar"
+              width={300}
+              height={0}
+            />
+          </div>
+        )}
+        {tweets.map((tweet) => (
           <TweetPreview
             key={tweet.name + tweet.handle} // Assumed unique identifier for React key
             name={tweet.name}
@@ -55,6 +74,7 @@ export function Twitter() {
             content={tweet.content}
             replies={tweet.replies}
             likes={tweet.likes}
+            id={tweet.id}
           />
         ))}
       </div>

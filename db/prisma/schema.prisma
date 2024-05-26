@@ -48,6 +48,8 @@ model tweet {
   authorId      Int       @map("author_id")
   author        human     @relation("AuthorTweets", fields: [authorId], references: [id])
 
+  vector        Json      @map("vector")
+
   likedBy       human[]   @relation("LikedTweets")
 
   parentTweetId Int?      @map("parent_tweet_id")
@@ -65,4 +67,34 @@ model NewsArticle {
   createdAt     DateTime  @default(now()) @map("created_at")
 
   @@map("news_articles") // Specifies the table name in the database
+}
+
+model Stock {
+  id        Int          @id @default(autoincrement()) @map("id")
+  symbol    String       @unique @map("symbol")
+  name      String       @map("name")
+  info      String       @map("info")
+  prices    StockPrice[] @relation("StockPrices")
+
+  @@map("stocks") // Specifies the table name for stocks in the database
+}
+
+model StockPrice {
+  id        Int      @id @default(autoincrement()) @map("id")
+  stockId   Int      @map("stock_id")
+  price     Float    @map("price")
+  timestamp DateTime @default(now()) @map("timestamp")
+
+  stock     Stock    @relation("StockPrices", fields: [stockId], references: [id])
+
+  @@map("stock_prices") // Specifies the table name for stock prices in the database
+}
+
+model Wikipage {
+  id            Int       @id @default(autoincrement()) @map("id")
+  title         String    @map("title")
+  content       String    @map("content")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@map("wikipages") // Specifies the table name in the database
 }

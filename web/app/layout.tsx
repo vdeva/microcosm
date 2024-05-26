@@ -19,6 +19,11 @@ const myFont = localFont({
       weight: "700",
       style: "normal",
     },
+    {
+      path: "./fonts/Dico.woff2",
+      weight: "900",
+      style: "normal",
+    },
   ],
 });
 
